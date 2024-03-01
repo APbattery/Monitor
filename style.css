@@ -1,0 +1,69 @@
+@font-face { font-family: 'Protest Strike';
+    src: url('ProtestStrike-Regular.ttf') format('woff2'), url('ProtestStrike-Regular.ttf') format('woff'); }
+body {
+   background-color: black;
+   color: white;
+   font-family: "Protest Strike", sans-serif;
+   font-weight: 400;
+   letter-spacing: 2.8px;
+   margin: 0px;
+   text-align: center;
+   font-size: 35px;
+   font-style: normal;
+   padding: 5%;
+   display: flex;
+   flex-direction: column;
+   justify-content: center;
+   align-items: center;
+   
+}
+h1, #progressBar, h2 {
+   width: 80%;
+   margin-left: auto;
+   margin-right: auto;
+   text-shadow: 0 0 3px black;
+}
+#progressBar {
+   height: 60px;
+  
+   overflow: hidden;
+   background-color: #286ab100;
+   border: 5px solid #286ab1;
+   
+}
+#progressCheck {
+   height: 100%;background-color:#C72F3B;
+   display: flex; justify-content: center; align-items: center;
+   width: 50px;
+   position: relative;
+   overflow: hidden;
+   text-shadow: 0 0 3px black;
+   
+  
+   
+}
+
+.extra-divs {
+   position: absolute; 
+   left: 50%; 
+   transform: translateX(-50%); 
+   display: flex;
+   animation: progressAnimation 20s infinite linear;
+}
+@keyframes progressAnimation {
+   0%   { transform: translateX(-60%); }
+   25%  { transform: translateX(-55%); }
+   50%  { transform: translateX(-50%); }
+   75%  { transform: translateX(-45%); }
+   100% { transform: translateX(-40%); }
+}
+
+.extra-divs > div {
+   width: 40px;
+   height: 100px; /* zmniejszenie wysokości dodatkowych elementów */
+   background-color: rgb(0, 0, 0);
+   transform: rotate(-30deg);
+   opacity: 0.1;
+   margin-right: 40px; /* zmniejszenie marginesu */
+}
+

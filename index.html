@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="favicon.png">
+    <title>Autopart Battery Monitor</title>
+    <meta name="author" content="Bartłomiej Giera">
+    <link rel="stylesheet" href="style.css">
+     <style>
+        #goalChangeButton{position:fixed;bottom:0;right:20%;background-color: #1f1f1f;overflow: hidden;opacity: 0.7;}
+        #goalChangeButton2{position:fixed;bottom:0;right:23%;background-color: #1f1f1f;overflow: hidden;opacity: 0.7;}
+        #goalChangeButton img,  #goalChangeButton2 img{width:30px;height:30px;padding:5px;padding-bottom:0px;opacity: 0.9;cursor: pointer;}
+        body{background-image: url('bgAutopart.png');background-repeat:no-repeat;background-size:100%;display: flex;align-items: center;justify-content: center;min-height: 80vh;margin: 0;overflow:hidden;}
+        #logo{position: fixed;top:5%;left:3%;width: 20%;}
+        #batteryIMG{position: fixed;bottom:4%;right:2%;width: 18%;}
+        #batteryIMG2{position: fixed;bottom:2%;left:2%;width: 12%;}
+        #div{vertical-align:middle}
+        
+      
+     </style>
+</head>
+<body>
+    <img id="logo" src="autopartLogoBlank.png" alt="">
+    <img id="batteryIMG" src="batteryIMG.png" alt="">
+    <img id="batteryIMG2" src="batteryIMG3.PNG" alt="">
+    <div id="div">
+    <h1>LICZBA <span style="color: #C72F3B;">AKUMULATORÓW</span> WYPRODUKOWANA <span style="color:#286BB1" id="yearInfo"></span></h1>
+    <div id="progressBar">
+        <div id="progressCheck" >
+        <p id="percentBar"></p>
+        <div class="extra-divs">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+    </div>
+    </div>
+    <h2><span style="color: #C72F3B;" id="batteryNum"></span> / <span style="color:#286BB1" id="goal"></span></h2>
+    </div>
+
+
+    <div id="goalChangeButton">
+        <img onclick="changeGoal();" src="up-arrow-svgrepo.png" alt="" title="zmiana celu">   
+    </div>
+    <div id="goalChangeButton2">
+        <a href="wykres-roczny.php">
+        <img  src="up-arrow-svgrepo-com.png" alt="" title="zmiana wykresu">   
+        </a>
+        
+    </div>
+    <script>
+   function updateGoal() {
+    fetch('http://192.168.1.198:5000/')
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log(data);
+        var batteryCountValue = parseInt(data.PWB_MontazSum);
+        var ThisYearGoal = parseInt(data.ThisYearGoal);
+        console.log(ThisYearGoal);
+        console.log(typeof ThisYearGoal);
+        document.getElementById("goal").innerHTML = ThisYearGoal.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+        document.getElementById("batteryNum").innerHTML = (batteryCountValue.toFixed(0)).toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+        if((batteryCountValue / ThisYearGoal) * 100 <= 100)
+            document.getElementById("progressCheck").style.width = (batteryCountValue / ThisYearGoal) * 100 + "%";
+        else
+            document.getElementById("progressCheck").style.width = "100%";
+        if((batteryCountValue / ThisYearGoal) * 100 < 8)
+            document.getElementById("percentBar").innerHTML = "";
+        else
+            document.getElementById("percentBar").innerHTML = ((batteryCountValue / ThisYearGoal) * 100).toFixed(1) + "%";
+    })
+    .catch(error => {
+        console.error('There was a problem with the fetch operation:', error);
+    });
+}
+
+
+
+
+function changeGoal() {
+            var newGoal = prompt("Podaj nowy cel (nie używaj spacji! przykładowa wartość: 2000000):") || "błędna wartość";
+            if (!isNaN(newGoal)) {
+                // Wysłanie żądania aktualizacji celu do aplikacji Flask
+                var xhr = new XMLHttpRequest();
+                xhr.open("POST", "http://192.168.1.198:5000/update_goal", true);
+                xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState == 4 && xhr.status == 200) {
+                        // Aktualizacja celu na stronie HTML po udanej aktualizacji
+                        document.getElementById("goal").innerHTML = newGoal.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+                        location.reload(); // Opcjonalnie, odświeżenie danych po zmianie celu
+                    }
+                    location.reload();
+                };
+                xhr.send("new_goal=" + newGoal);
+            } else {
+                alert("Błędna Wartość!");
+            }
+        }
+
+    var today = new Date();
+    var year = today.getFullYear();
+    document.getElementById("yearInfo").innerHTML = "W "+ year;
+
+    updateGoal();
+</script>
+</body>
+</html>
